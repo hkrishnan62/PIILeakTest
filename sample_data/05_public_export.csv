@@ -1,0 +1,9 @@
+age_group,total_transactions,lifetime_value,customer_email
+35-44,45,12500.00,john.doe@example.com
+30-39,32,8900.00,jane.smith@example.com
+45-54,67,23400.00,bob.wilson@example.com
+30-39,23,5600.00,alice.jones@example.com
+35-44,51,15200.00,charlie.brown@example.com
+25-34,18,3400.00,diana.prince@example.com
+40-49,89,34500.00,frank.miller@example.com
+35-44,42,11200.00,grace.hopper@example.com

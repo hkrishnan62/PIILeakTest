@@ -1,0 +1,105 @@
+# Test Suite Configuration for PIILeakTest Demo
+
+# Define all datasets with their policies
+datasets:
+  - name: source_customers
+    path: sample_data/01_source_customers.csv
+    format: csv
+    allowed_pii_types:
+      - email
+      - phone
+      - ssn
+      - full_name
+      - dob
+      - account_number
+    forbidden_pii_types: []
+    masking_required_for: []
+    hash_allowed_for: []
+
+  - name: staging_customers
+    path: sample_data/02_staging_customers.csv
+    format: csv
+    allowed_pii_types:
+      - email
+      - full_name
+      - dob
+      - account_number
+    forbidden_pii_types:
+      - ssn  # Plaintext SSN should be masked
+    masking_required_for:
+      - ssn
+    hash_allowed_for: []
+
+  - name: dw_customer_dim
+    path: sample_data/03_dw_customer_dim.csv
+    format: csv
+    allowed_pii_types:
+      - account_number  # tokenized
+    forbidden_pii_types:
+      - email
+      - phone
+      - ssn
+      - dob
+    masking_required_for:
+      - ssn
+    hash_allowed_for:
+      - email
+      - full_name
+
+  - name: analytics_customer_kpis
+    path: sample_data/04_analytics_customer_kpis.csv
+    format: csv
+    allowed_pii_types: []
+    forbidden_pii_types:
+      - email
+      - phone
+      - ssn
+      - credit_card
+      - ip_address
+      - full_name
+      - dob
+      - account_number
+    masking_required_for: []
+    hash_allowed_for: []
+
+  - name: public_export
+    path: sample_data/05_public_export.csv
+    format: csv
+    allowed_pii_types: []
+    forbidden_pii_types:
+      - email
+      - phone
+      - ssn
+      - credit_card
+      - ip_address
+      - passport
+      - dob
+      - full_name
+      - account_number
+      - high_entropy_token
+    masking_required_for: []
+    hash_allowed_for: []
+
+# Define data lineage (flow between datasets)
+lineage:
+  - source: source_customers
+    target: staging_customers
+  - source: staging_customers
+    target: dw_customer_dim
+  - source: dw_customer_dim
+    target: analytics_customer_kpis
+  - source: analytics_customer_kpis
+    target: public_export
+
+# Sampling configuration
+sampling:
+  mode: head  # Options: head, random, full
+  rows: 1000
+
+# Thresholds for detection and reporting
+thresholds:
+  entropy_threshold: 4.5
+  max_violations_to_show: 10
+  fail_on_severity:
+    - CRITICAL
+    - HIGH

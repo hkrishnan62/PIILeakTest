@@ -1,0 +1,81 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "piileaktest"
+version = "0.1.0"
+description = "ETL testing framework for detecting PII leakage in data pipelines"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "PIILeakTest Contributors"}
+]
+keywords = ["etl", "testing", "pii", "privacy", "data-warehouse", "gdpr", "compliance"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+dependencies = [
+    "typer>=0.9.0",
+    "pandas>=2.0.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "jinja2>=3.1.0",
+    "pyarrow>=12.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+]
+
+[project.scripts]
+piileaktest = "piileaktest.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/example/piileaktest"
+Documentation = "https://github.com/example/piileaktest"
+Repository = "https://github.com/example/piileaktest"
+"Bug Tracker" = "https://github.com/example/piileaktest/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["piileaktest*"]
+
+[tool.setuptools.package-data]
+piileaktest = ["reporting/templates/*.j2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false

@@ -1,0 +1,9 @@
+customer_id,email,ssn_masked,full_name,dob,account_number
+1001,john.doe@example.com,***-**-6789,John Doe,1985-03-15,87654321
+1002,jane.smith@example.com,***-**-7890,Jane Smith,1990-07-22,87654322
+1003,bob.wilson@example.com,***-**-8901,Bob Wilson,1978-11-30,87654323
+1004,alice.jones@example.com,***-**-9012,Alice Jones,1992-05-18,87654324
+1005,charlie.brown@example.com,***-**-0123,Charlie Brown,1988-09-25,87654325
+1006,diana.prince@example.com,***-**-1234,Diana Prince,1995-02-14,87654326
+1007,frank.miller@example.com,***-**-2345,Frank Miller,1980-12-08,87654327
+1008,grace.hopper@example.com,***-**-3456,Grace Hopper,1987-06-20,87654328
