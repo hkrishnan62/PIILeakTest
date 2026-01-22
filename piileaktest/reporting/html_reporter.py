@@ -4,7 +4,6 @@ from pathlib import Path
 from jinja2 import Template
 from piileaktest.models import SuiteResult
 
-
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -264,19 +263,19 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 def export_to_html(result: SuiteResult, output_path: str) -> None:
     """
     Export suite results to HTML format.
-    
+
     Args:
         result: SuiteResult object to export
         output_path: Path to output HTML file
     """
     output_file = Path(output_path)
     output_file.parent.mkdir(parents=True, exist_ok=True)
-    
+
     template = Template(HTML_TEMPLATE)
-    
+
     html_content = template.render(
         suite_name=result.suite_name,
-        timestamp=result.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+        timestamp=result.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
         overall_passed=result.overall_passed,
         total_datasets=result.total_datasets,
         total_assertions=result.total_assertions,
@@ -285,22 +284,22 @@ def export_to_html(result: SuiteResult, output_path: str) -> None:
         execution_time_seconds=result.execution_time_seconds,
         assertion_results=[
             {
-                'assertion_type': ar.assertion_type,
-                'dataset': ar.dataset,
-                'passed': ar.passed,
-                'message': ar.message,
-                'severity': ar.severity.value,
-                'findings': [
+                "assertion_type": ar.assertion_type,
+                "dataset": ar.dataset,
+                "passed": ar.passed,
+                "message": ar.message,
+                "severity": ar.severity.value,
+                "findings": [
                     {
-                        'dataset': f.dataset,
-                        'column': f.column,
-                        'pii_type': f.pii_type.value,
-                        'masking_type': f.masking_type.value,
-                        'row_index': f.row_index,
-                        'redacted_sample': f.redacted_sample,
-                        'count': f.count,
-                        'severity': f.severity.value,
-                        'message': f.message,
+                        "dataset": f.dataset,
+                        "column": f.column,
+                        "pii_type": f.pii_type.value,
+                        "masking_type": f.masking_type.value,
+                        "row_index": f.row_index,
+                        "redacted_sample": f.redacted_sample,
+                        "count": f.count,
+                        "severity": f.severity.value,
+                        "message": f.message,
                     }
                     for f in ar.findings
                 ],
@@ -308,6 +307,6 @@ def export_to_html(result: SuiteResult, output_path: str) -> None:
             for ar in result.assertion_results
         ],
     )
-    
-    with open(output_file, 'w') as f:
+
+    with open(output_file, "w") as f:
         f.write(html_content)

@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 class PIIType(str, Enum):
     """Enumeration of PII types detected by the framework."""
-    
+
     EMAIL = "email"
     PHONE = "phone"
     SSN = "ssn"
@@ -24,7 +24,7 @@ class PIIType(str, Enum):
 
 class Severity(str, Enum):
     """Severity levels for findings."""
-    
+
     CRITICAL = "CRITICAL"
     HIGH = "HIGH"
     MEDIUM = "MEDIUM"
@@ -34,7 +34,7 @@ class Severity(str, Enum):
 
 class MaskingType(str, Enum):
     """Types of masking/obfuscation applied to PII."""
-    
+
     PLAINTEXT = "plaintext"
     PARTIAL_MASK = "partial_mask"  # e.g., ***-**-1234
     FULL_MASK = "full_mask"  # e.g., ****
@@ -44,7 +44,7 @@ class MaskingType(str, Enum):
 
 class Finding(BaseModel):
     """Represents a single PII detection finding."""
-    
+
     dataset: str
     column: str
     pii_type: PIIType
@@ -58,7 +58,7 @@ class Finding(BaseModel):
 
 class DatasetPolicy(BaseModel):
     """Policy definition for a dataset."""
-    
+
     name: str
     path: str
     format: str = "csv"
@@ -70,21 +70,21 @@ class DatasetPolicy(BaseModel):
 
 class LineageEdge(BaseModel):
     """Represents a data lineage edge between datasets."""
-    
+
     source: str
     target: str
 
 
 class SamplingConfig(BaseModel):
     """Configuration for data sampling."""
-    
+
     mode: str = "head"  # head, random, full
     rows: int = 1000
 
 
 class ThresholdConfig(BaseModel):
     """Thresholds for detection and reporting."""
-    
+
     entropy_threshold: float = 4.5
     max_violations_to_show: int = 10
     fail_on_severity: List[Severity] = Field(
@@ -94,7 +94,7 @@ class ThresholdConfig(BaseModel):
 
 class SuiteConfig(BaseModel):
     """Complete test suite configuration."""
-    
+
     datasets: List[DatasetPolicy]
     lineage: List[LineageEdge] = Field(default_factory=list)
     sampling: SamplingConfig = Field(default_factory=SamplingConfig)
@@ -103,7 +103,7 @@ class SuiteConfig(BaseModel):
 
 class AssertionResult(BaseModel):
     """Result of a single assertion."""
-    
+
     assertion_type: str
     dataset: str
     passed: bool
@@ -114,7 +114,7 @@ class AssertionResult(BaseModel):
 
 class SuiteResult(BaseModel):
     """Overall result of running a test suite."""
-    
+
     suite_name: str = "PIILeakTest Suite"
     timestamp: datetime = Field(default_factory=datetime.now)
     total_datasets: int = 0
@@ -125,11 +125,12 @@ class SuiteResult(BaseModel):
     overall_passed: bool = False
     execution_time_seconds: float = 0.0
     summary: Dict[str, Any] = Field(default_factory=dict)
-    
+
     def should_fail_ci(self) -> bool:
         """Determine if CI should fail based on severity thresholds."""
         critical_high_failures = [
-            ar for ar in self.assertion_results
+            ar
+            for ar in self.assertion_results
             if not ar.passed and ar.severity in [Severity.CRITICAL, Severity.HIGH]
         ]
         return len(critical_high_failures) > 0

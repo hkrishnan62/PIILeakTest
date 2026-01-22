@@ -23,35 +23,35 @@ def assert_only_allowed_pii(
 ) -> AssertionResult:
     """
     Assert that only explicitly allowed PII types appear in the dataset.
-    
+
     This is a strict check: any PII not in allowed_pii_types is flagged.
-    
+
     Args:
         df: DataFrame to check
         policy: Dataset policy with allowed_pii_types
         max_violations: Maximum number of violation examples to collect
-        
+
     Returns:
         AssertionResult with findings
     """
     findings: List[Finding] = []
     allowed_types = set(policy.allowed_pii_types)
-    
+
     # Scan each column
     for col in df.columns:
         col_findings = {}  # Track findings by PII type
-        
+
         for idx, value in df[col].items():
             if pd.isna(value):
                 continue
-            
+
             value_str = str(value).strip()
             if not value_str:
                 continue
-            
+
             # Collect all detected PII types
             detected_types: Set[PIIType] = set()
-            
+
             # Check standard patterns
             detected = detect_pii_in_value(value_str)
             for pii_type, masking_type in detected:
@@ -61,7 +61,7 @@ def assert_only_allowed_pii(
                         col_findings[pii_type] = []
                     if len(col_findings[pii_type]) < max_violations:
                         col_findings[pii_type].append((idx, value_str, masking_type))
-            
+
             # Check credit card separately (Luhn)
             if is_credit_card(value_str):
                 if PIIType.CREDIT_CARD not in allowed_types:
@@ -70,7 +70,7 @@ def assert_only_allowed_pii(
                         col_findings[PIIType.CREDIT_CARD] = []
                     if len(col_findings[PIIType.CREDIT_CARD]) < max_violations:
                         col_findings[PIIType.CREDIT_CARD].append((idx, value_str, masking_type))
-            
+
             # Check high entropy tokens
             if is_high_entropy_token(value_str):
                 if PIIType.HIGH_ENTROPY_TOKEN not in allowed_types:
@@ -80,7 +80,7 @@ def assert_only_allowed_pii(
                         col_findings[PIIType.HIGH_ENTROPY_TOKEN].append(
                             (idx, value_str, MaskingType.PLAINTEXT)
                         )
-        
+
         # Convert to Finding objects
         for pii_type, violations in col_findings.items():
             if violations:
@@ -95,13 +95,13 @@ def assert_only_allowed_pii(
                     count=len(violations),
                     severity=Severity.HIGH,
                     message=f"Disallowed PII type '{pii_type.value}' found in column '{col}' "
-                            f"({len(violations)} occurrence(s))",
+                    f"({len(violations)} occurrence(s))",
                 )
                 findings.append(finding)
-    
+
     passed = len(findings) == 0
     severity = Severity.HIGH if not passed else Severity.INFO
-    
+
     if passed:
         message = f"PASS: Only allowed PII types present in {policy.name}"
     else:
@@ -111,7 +111,7 @@ def assert_only_allowed_pii(
             f"FAIL: {policy.name} contains {unique_types} disallowed PII type(s) "
             f"with {total_violations} total occurrence(s)"
         )
-    
+
     return AssertionResult(
         assertion_type="only_allowed_pii",
         dataset=policy.name,
